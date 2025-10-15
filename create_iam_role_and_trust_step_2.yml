@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  This template creates the DJB-Cross-Account-Role with a trust policy
+  that allows specified AWS principals to assume the role.
+
+Parameters:
+  TrustedPrincipals:
+    Type: CommaDelimitedList
+    Description: A comma-separated list of AWS principal ARNs that are allowed to assume this role.
+  ManagedPolicyArnsList:
+    Type: CommaDelimitedList
+    Description: A comma-separated list of managed policy ARNs to attach to the role.
+
+Resources:
+  DJBCrossAccountRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: "DJB-Cross-Account-Role"
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS: !Ref TrustedPrincipals
+            Action:
+              - sts:AssumeRole
+            Condition: {}
+      ManagedPolicyArns: !Ref ManagedPolicyArnsList
+
+Outputs:
+  RoleArn:
+    Description: "The ARN of the created DJB-Cross-Account-Role."
+    Value: !GetAtt DJBCrossAccountRole.Arn
+  RoleId:
+    Description: "The stable and unique ID of the created role."
+    Value: !GetAtt DJBCrossAccountRole.RoleId
